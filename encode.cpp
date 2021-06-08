@@ -28,12 +28,12 @@ public:
 			Jija[c]++;
 		}
 		file.clear();
-		file.seekg(0); //возвращаем указатель в начало файла
+		file.seekg(0); //ГўГ®Г§ГўГ°Г Г№Г ГҐГ¬ ГіГЄГ Г§Г ГІГҐГ«Гј Гў Г­Г Г·Г Г«Г® ГґГ Г©Г«Г 
 	}
 
 	void Print() {
 		for (auto it = Jija.begin(); it != Jija.end(); it++) {
-			cout << it->first << ": " << it->second << endl;					//печатается структура вида " *символ_нейм*: *его_число*"
+			cout << it->first << ": " << it->second << endl;					//ГЇГҐГ·Г ГІГ ГҐГІГ±Гї Г±ГІГ°ГіГЄГІГіГ°Г  ГўГЁГ¤Г  " *Г±ГЁГ¬ГўГ®Г«_Г­ГҐГ©Г¬*: *ГҐГЈГ®_Г·ГЁГ±Г«Г®*"
 		}
 	}
 };
@@ -58,7 +58,7 @@ int main() {
 
 	MapKeys jija;
 
-	jija.CreateMap(fin);					//создаем мапу
+	jija.CreateMap(fin);					//Г±Г®Г§Г¤Г ГҐГ¬ Г¬Г ГЇГі
 	cout << jija.Jija.size() << endl;
 	jija.Print();
 
@@ -93,15 +93,15 @@ int main() {
 	
 
 	int k = jija.Jija.size();
-	fout.write((char*)&k, sizeof(k));										//записываем количество символов элементов
+	fout.write((char*)&k, sizeof(k));										//Г§Г ГЇГЁГ±Г»ГўГ ГҐГ¬ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г±ГЁГ¬ГўГ®Г«Г®Гў ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў
 	for (auto it = jija.Jija.begin(); it != jija.Jija.end(); it++) {
-		fout.write((char*)&it->first, sizeof(it->first));					//пишем символ
-		fout.write((char*)&it->second, sizeof(it->second));					//пишем количество
+		fout.write((char*)&it->first, sizeof(it->first));					//ГЇГЁГёГҐГ¬ Г±ГЁГ¬ГўГ®Г«
+		fout.write((char*)&it->second, sizeof(it->second));					//ГЇГЁГёГҐГ¬ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ®
 	}
 
-	double l = 0, h = 1;				//предшествующий промежуток
-	double l2 = 0, h2 = 1;			//промежуток, который будем определять на этом шаге
-	double a = 0, b = 1;				//a - левая граница символа, b - правая
+	double l = 0, h = 1;				//ГЇГ°ГҐГ¤ГёГҐГ±ГІГўГіГѕГ№ГЁГ© ГЇГ°Г®Г¬ГҐГ¦ГіГІГ®ГЄ
+	double l2 = 0, h2 = 1;			//ГЇГ°Г®Г¬ГҐГ¦ГіГІГ®ГЄ, ГЄГ®ГІГ®Г°Г»Г© ГЎГіГ¤ГҐГ¬ Г®ГЇГ°ГҐГ¤ГҐГ«ГїГІГј Г­Г  ГЅГІГ®Г¬ ГёГ ГЈГҐ
+	double a = 0, b = 1;				//a - Г«ГҐГўГ Гї ГЈГ°Г Г­ГЁГ¶Г  Г±ГЁГ¬ГўГ®Г«Г , b - ГЇГ°Г ГўГ Гї
 	int ncount = 0;
 	while (!fin.eof()) {
 		char c = fin.get();
@@ -113,18 +113,16 @@ int main() {
 		l2 = l + a * (h - l);
 		h2 = l + b * (h - l);
 
-		if (/*l2 == h2*/ ncount == 10 || fin.eof()) {				//если они совпали - значит нам уже не хватает точности, и надо выписывать результат
-			/*fout << (l + h) / (double)2;
-			cout << " result= " << (l + h) / (double)2 << endl;*/
+		if (/*l2 == h2*/ ncount == 10 || fin.eof()) {				//ГҐГ±Г«ГЁ Г®Г­ГЁ Г±Г®ГўГЇГ Г«ГЁ - Г§Г­Г Г·ГЁГІ Г­Г Г¬ ГіГ¦ГҐ Г­ГҐ ГµГўГ ГІГ ГҐГІ ГІГ®Г·Г­Г®Г±ГІГЁ, ГЁ Г­Г Г¤Г® ГўГ»ГЇГЁГ±Г»ГўГ ГІГј Г°ГҐГ§ГіГ«ГјГІГ ГІ
+			fout << (l + h) / (double)2;
+			cout << " result= " << (l + h) / (double)2 << endl;
 			/*fout << ncount;
 			cout << " ncount= " << ncount << endl;*/
-			fout.write((char*)&l, sizeof(l));
-			cout << " result= " << l << endl;
 			l = 0;
 			h = 1;
 			ncount = 0;
 		}
-		else {						//если не совпали - считаем дальше с новыми границами
+		else {						//ГҐГ±Г«ГЁ Г­ГҐ Г±Г®ГўГЇГ Г«ГЁ - Г±Г·ГЁГІГ ГҐГ¬ Г¤Г Г«ГјГёГҐ Г± Г­Г®ГўГ»Г¬ГЁ ГЈГ°Г Г­ГЁГ¶Г Г¬ГЁ
 			l = l2;
 			h = h2;
 		}
