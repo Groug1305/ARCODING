@@ -28,19 +28,19 @@ public:
 			Jija[c]++;
 		}
 		file.clear();
-		file.seekg(0); //возвращаем указатель в начало файла
+		file.seekg(0); //ГўГ®Г§ГўГ°Г Г№Г ГҐГ¬ ГіГЄГ Г§Г ГІГҐГ«Гј Гў Г­Г Г·Г Г«Г® ГґГ Г©Г«Г 
 	}
 
 	int HeadRead(ifstream& file) {
-		unsigned long long len = 0;					//длина общего текста, не считая (собаки) головы
+		unsigned long long len = 0;					//Г¤Г«ГЁГ­Г  Г®ГЎГ№ГҐГЈГ® ГІГҐГЄГ±ГІГ , Г­ГҐ Г±Г·ГЁГІГ Гї (Г±Г®ГЎГ ГЄГЁ) ГЈГ®Г«Г®ГўГ»
 		int key, q;
 		char s;
 
 		file.read((char*)&q, sizeof(q));
 		for (int i = 0; i < q; i++) {
-			file.read((char*)&s, sizeof(s));		//считываем символ
-			file.read((char*)&key, sizeof(key));	//считываем его значение
-			Jija[s] = key;							//помещаем ключ в мапу
+			file.read((char*)&s, sizeof(s));		//Г±Г·ГЁГІГ»ГўГ ГҐГ¬ Г±ГЁГ¬ГўГ®Г«
+			file.read((char*)&key, sizeof(key));	//Г±Г·ГЁГІГ»ГўГ ГҐГ¬ ГҐГЈГ® Г§Г­Г Г·ГҐГ­ГЁГҐ
+			Jija[s] = key;							//ГЇГ®Г¬ГҐГ№Г ГҐГ¬ ГЄГ«ГѕГ· Гў Г¬Г ГЇГі
 			len += key;
 		}
 
@@ -49,7 +49,7 @@ public:
 
 	void Print() {
 		for (auto it = Jija.begin(); it != Jija.end(); it++) {
-			cout << it->first << ": " << it->second << endl;					//печатается структура вида " *символ_нейм*: *его_число*"
+			cout << it->first << ": " << it->second << endl;					//ГЇГҐГ·Г ГІГ ГҐГІГ±Гї Г±ГІГ°ГіГЄГІГіГ°Г  ГўГЁГ¤Г  " *Г±ГЁГ¬ГўГ®Г«_Г­ГҐГ©Г¬*: *ГҐГЈГ®_Г·ГЁГ±Г«Г®*"
 		}
 	}
 };
@@ -74,7 +74,7 @@ int main() {
 
 	MapKeys jija;
 
-	int len = jija.HeadRead(fin);		//из мапы жижи получаем общую длинну, получаенную при считывании хэдера
+	int len = jija.HeadRead(fin);		//ГЁГ§ Г¬Г ГЇГ» Г¦ГЁГ¦ГЁ ГЇГ®Г«ГіГ·Г ГҐГ¬ Г®ГЎГ№ГіГѕ Г¤Г«ГЁГ­Г­Гі, ГЇГ®Г«ГіГ·Г ГҐГ­Г­ГіГѕ ГЇГ°ГЁ Г±Г·ГЁГІГ»ГўГ Г­ГЁГЁ ГµГЅГ¤ГҐГ°Г 
 	jija.Print();
 
 	list<Grani> List;
@@ -106,14 +106,14 @@ int main() {
 		borders[it->c] = (*it);
 	}
 
-	double l = 0, h = 1;				//предшествующий промежуток
-	double l2 = 0, h2 = 1;				//промежуток, который будем определять на этом шаге
-	double a = 0, b = 1;				//a - левая граница символа, b - правая
+	double l = 0, h = 1;				//ГЇГ°ГҐГ¤ГёГҐГ±ГІГўГіГѕГ№ГЁГ© ГЇГ°Г®Г¬ГҐГ¦ГіГІГ®ГЄ
+	double l2 = 0, h2 = 1;				//ГЇГ°Г®Г¬ГҐГ¦ГіГІГ®ГЄ, ГЄГ®ГІГ®Г°Г»Г© ГЎГіГ¤ГҐГ¬ Г®ГЇГ°ГҐГ¤ГҐГ«ГїГІГј Г­Г  ГЅГІГ®Г¬ ГёГ ГЈГҐ
+	double a = 0, b = 1;				//a - Г«ГҐГўГ Гї ГЈГ°Г Г­ГЁГ¶Г  Г±ГЁГ¬ГўГ®Г«Г , b - ГЇГ°Г ГўГ Гї
 	double value = 0;
 	int p = 0;
 	while (!fin.eof()) {
 		p = 10;
-		fin.read((char*)&value, sizeof(value));
+		fin >> value;
 		cout << "value: " << value << endl;
 		do {
 			for (auto i = borders.begin(); i != borders.end(); i++) {
