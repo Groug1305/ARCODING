@@ -11,8 +11,8 @@ using namespace std;
 class Grani {
 public:
 	char c;
-	int key;
-	double right, left;
+	unsigned int key;
+	int right, left;
 };
 
 
@@ -73,22 +73,17 @@ int main() {
 	}
 	List.sort(compare);
 
-	double tmp = 0;
+	int tmp64 = 0;
 	for (auto qwerty = List.begin(); qwerty != List.end(); qwerty++) {
 		cout << "qwerty.c: " << qwerty->c << endl;
 
-		qwerty->left = tmp;
+		qwerty->left = tmp64;
 		cout << "qwerty.left: " << qwerty->left << endl;
 
-		qwerty->right = tmp + (double)qwerty->key / (double)count;
+		qwerty->right = tmp64 + qwerty->key;
 		cout << "qwerty.right: " << qwerty->right << endl;
 
-		tmp = qwerty->right;
-	}
-
-	map<char, Grani> borders;
-	for (auto it = List.begin(); it != List.end(); it++) {
-		borders[it->c] = (*it);
+		tmp64 = qwerty->right;
 	}
 	
 
@@ -99,36 +94,75 @@ int main() {
 		fout.write((char*)&it->second, sizeof(it->second));					//пишем количество
 	}
 
-	double l = 0, h = 1;				//предшествующий промежуток
-	double l2 = 0, h2 = 1;			//промежуток, который будем определять на этом шаге
-	double a = 0, b = 1;				//a - левая граница символа, b - правая
+	list<Grani>::iterator it;
+	unsigned short l = 0, h = 65535;
+	int delitel = List.back().right;
+	unsigned short First_qtr = (h + 1) / 4;									//16384
+	unsigned short Half = First_qtr * 2;										//32768
+	unsigned short Thride_qtr = First_qtr * 3;									//49152
+	int bitsf = 0;								//сколько битов сбрасывать
+	char tmp = 0;
 	int ncount = 0;
 	while (!fin.eof()) {
-		char c = fin.get();
-		cout << c;
-		ncount++;
-		a = borders[c].left;
-		b = borders[c].right;
+		int c = fin.get();
+		if (c == EOF) break;
+		for (it = List.begin(); it != List.end() && it->c != c; it++);
+		int d = h - l + 1;
+		h = l + it->right * d / delitel - 1;
+		l = l + it->left * d / delitel;
+		while(1) {
+			if (h < Half) {
+				ncount++;
+				if (ncount == 8)
+				{
+					fout.put(tmp);
+					tmp = 0;
+					ncount = 0;
+				}
+				for (; bitsf > 0; bitsf--)
+				{
+					tmp = tmp | (1 << (7 - ncount));
+					ncount++;
+					if (ncount == 8)
+					{
+						fout.put(tmp);
+						tmp = 0;
+						ncount = 0;
+					}
+				}
+			}
+			else if (l >= Half) {
+				tmp = tmp | (1 << (7 - ncount));
+				ncount++;
+				if (ncount == 8)
+				{
+					fout.put(tmp);
+					tmp = 0;
+					ncount = 0;
+				}
+				for (; bitsf > 0; bitsf--)
+				{
+					ncount++;
+					if (ncount == 8)
+					{
+						fout.put(tmp);
+						tmp = 0;
+						ncount = 0;
+					}
+				}
+				h -= Half;
+				l -= Half; 
+			}
+			else if ((l >= First_qtr) && (h < Thride_qtr)) {
+				bitsf++;
+				h -= First_qtr;
+				l -= First_qtr; 
+			}
+			else break;
 
-		l2 = l + a * (h - l);
-		h2 = l + b * (h - l);
-
-		if (/*l2 == h2*/ ncount == 5/* || fin.eof()*/) {				//если они совпали - значит нам уже не хватает точности, и надо выписывать результат
-			/*fout << (l + h) / (double)2;
-			cout << " result= " << (l + h) / (double)2 << endl;*/
-			/*fout << ncount;
-			cout << " ncount= " << ncount << endl;*/
-			fout.write((char*)&l, sizeof(l));
-			cout << " result= " << l << endl;
-			/*fout << l;
-			cout << " result= " << l << endl;*/
-			l = 0;
-			h = 1;
-			ncount = 0;
-		}
-		else {						//если не совпали - считаем дальше с новыми границами
-			l = l2;
-			h = h2;
+			h <<= 1;
+			l <<= 1;
+			h++;
 		}
 	}
 

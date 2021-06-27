@@ -11,8 +11,8 @@ using namespace std;
 class Grani {
 public:
 	char c;
-	int key;
-	double right, left;
+	unsigned int key;
+	int right, left;
 };
 
 
@@ -88,60 +88,63 @@ int main() {
 	}
 	List.sort(compare);
 
-	double tmp = 0;
+	int tmp64 = 0;
 	for (auto qwerty = List.begin(); qwerty != List.end(); qwerty++) {
 		cout << "qwerty.c: " << qwerty->c << endl;
 
-		qwerty->left = tmp;
+		qwerty->left = tmp64;
 		cout << "qwerty.left: " << qwerty->left << endl;
 
-		qwerty->right = tmp + (double)qwerty->key / (double)count;
+		qwerty->right = tmp64 + qwerty->key;
 		cout << "qwerty.right: " << qwerty->right << endl;
 
-		tmp = qwerty->right;
+		tmp64 = qwerty->right;
 	}
 
-	map<char, Grani> borders;
-	for (auto it = List.begin(); it != List.end(); it++) {
-		borders[it->c] = (*it);
-	}
 
-	double l = 0, h = 1;				//предшествующий промежуток
-	double l2 = 0, h2 = 1;				//промежуток, который будем определять на этом шаге
-	double a = 0, b = 1;				//a - левая граница символа, b - правая
-	double value = 0;
-	int p = 0;
-	while (!fin.eof()) {
-		p = 5;
-		fin.read((char*)&value, sizeof(value));
-		//fin >> value;
-		cout << "value: " << value << endl;
-		do {
-			for (auto i = borders.begin(); i != borders.end(); i++) {
-				a = i->second.left;
-				b = i->second.right;
-
-				l2 = l + a * (h - l);
-				h2 = l + b * (h - l);
-
-				if (l2 - value <= 0.00000001 && h2 - value > 0.00000001) {
-					cout << "char: " << i->second.c << endl;
-					cout << l2 << " <= " << value << " < " << h2 << endl;
-					fout << i->second.c;
-					l = l2;
-					h = h2;
-					p--;
-				}
-
-				if (p == 0) {
-					cout << "moving to next" << endl;
-					l = 0;
-					h = 1;
-					break;
-				}
+	list<Grani>::iterator it;
+	int last = List.back().right;
+	unsigned short l = 0, h = 65535;
+	unsigned short First_qtr = (h + 1) / 4;										//16384
+	unsigned short Half = First_qtr * 2;										//32768
+	unsigned short Thride_qtr = First_qtr * 3;									//49152
+	int value = (fin.get() << 8) | fin.get();
+	char tmp = fin.get();
+	int ncount = 0;
+	//cout<<endl<<delitel<<endl;
+	while (len){
+		int d = h - l + 1;
+		unsigned int freq = (((value - l + 1) * last) - 1) / d;
+		for (it = List.begin(); it->right <= freq; it++);
+		
+		h = l + it->right * d / last - 1;
+		l = l + it->left * d / last;
+		while(1){
+			if (h < Half);
+			else if (l >= Half){
+				value -= Half;
+				l -= Half;
+				h -= Half;
 			}
-		} 		
-		while (p != 0);
+			else if ((l >= First_qtr) && (h < Thride_qtr)){
+				value -= First_qtr;
+				l -= First_qtr;
+				h -= First_qtr;
+			}
+			else break;
+			l <<= 1;
+			h <<= 1;
+			h++;
+			value <<= 1;
+			value += ((tmp & (1 << (7 - ncount))) >> (7 - ncount));
+			ncount++;
+			if (ncount == 8){
+				tmp = fin.get();
+				ncount = 0;
+			}
+		}
+		fout << it->c;
+		len--;
 	}
 
 
